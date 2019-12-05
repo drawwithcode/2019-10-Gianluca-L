@@ -7,6 +7,9 @@ var multiplier = 0;
 var sign;
 var el;
 var pos = 1;
+var moodColor = [];
+moodColor.lenght = 3;
+var al;
 
 
 function preload() {
@@ -17,16 +20,18 @@ function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   frameRate(60);
   angleMode(DEGREES);
-
+  moodColor = color(random()*255, random()*255, random()*255, 50);
   graphics = createGraphics(width / 1.92, height / 1.08);
-  graphics.background(0, 150, 0, 50);
+  //graphics.background(0, 150, 0, 50);
+  graphics.background(moodColor);
   graphics.fill(130, 200);
-  el =graphics.ellipse(width / 2, height / 2, width / (1.92 * 2), height / (1.08 * 1.43));
+  graphics.ellipse(width / 2, height / 2, width / (1.92 * 2), height / (1.08 * 1.43));
 
 }
 
 function draw() {
   background(0);
+
   var direction = 1;
   if (mouseY > height/2) { // bottom of the screen
     direction = 1;
@@ -44,10 +49,12 @@ function draw() {
     }
   }
 
-
+  //orbitControl();
   camera(x_angle, 0, direction*1000*pos, 0, 0, 0, 0, 1, 0);
 
-  ambientLight(200, 200, 200);
+
+  ambientLight(moodColor); // 200, 200, 200
+  graphics.fill(moodColor, 200);
 
   if (width > height) {
     scale(width / 550);
@@ -93,6 +100,10 @@ function draw() {
   aircraft = model(mask);
   //console.log(el);
 
+}
+function mouseClicked() {
+  moodColor = color(random()*255, random()*255, random()*255);
+      console.log(moodColor);
 }
 
 function mouseWheel(event) {
