@@ -23,26 +23,10 @@ var z_aircraft = 0;
 var scaleAircraft = 40000;
 var getRidOfPlanets = 0;
 
-const FOLDER = 'assets/',
-  EXT = '.jpg',
-  INDEX_START = 0,
-  INDEX_END = 4,
-  INDEX_TOTAL = 0 + INDEX_END - INDEX_START,
-  textures = Array(INDEX_TOTAL);
-
-
-
-
 function preload() {
   planet = loadImage("assets/makemake.jpg");
   moon = loadImage("assets/eris.jpg");
   aircraft = loadModel("assets/Aircraft.obj", true); // true = maschera renderizzata (normalizzata) secondo sistema riferimento p5
-  // texture_0 = loadImage("assets/texture_0.jpg");
-  // texture_1 = loadImage("assets/texture_1.jpg");
-  // texture_2 = loadImage("assets/texture_2.jpg");
-  for (var i = 0; i < INDEX_TOTAL; ++i) {
-    textures[i] = loadImage(FOLDER + (i + INDEX_START) + EXT);
-  }
 }
 
 function setup() {
@@ -123,7 +107,7 @@ function draw() {
     directionalLight(255, 255, 255, 0, 1, -0.7);
 
     camera(0 + x_pos, 0 + y_pos, 2875 + z_pos, 0 + x_aircraft, 0 + y_aircraft, 0 + z_aircraft, 0, 1, 0); // z 875, z 2875
-    console.log(x_pos, y_pos, z_pos);
+    //console.log(x_pos, y_pos, z_pos);
 
   } else if (scaleAircraft <  width/7.5) {
      var direction = 1;
@@ -148,11 +132,14 @@ function draw() {
     }
 
     //orbitControl();
-    camera(x_angle, y_aircraft, 2000*direction*pos, x_aircraft, y_aircraft, 0, 0, 1, 0);
-
 
     ambientLight(moodColor); // 200, 200, 200
     graphics.fill(moodColor, 200);
+    
+    camera(x_angle, y_aircraft, 2300*direction*pos, x_aircraft, y_aircraft, 0, 0, 1, 0);
+
+
+
   }
   ////////////////////////// Aircraft
   push();
@@ -214,6 +201,7 @@ function mouseClicked() {
   moodColor = color(random() * 255, random() * 255, random() * 255);
   //moodColorC = color(random() * 255, random() * 255, random() * 255, 20);
   console.log(moodColor);
+    moveCam = true;
 }
 
 function mouseWheel(event) {
@@ -228,11 +216,6 @@ function mouseWheel(event) {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-}
-
-function mouseClicked() {
-  moveCam = true;
-
 }
 
 
