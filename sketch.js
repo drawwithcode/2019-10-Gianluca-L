@@ -1,18 +1,12 @@
-// Planet
+// Planet texture
 var planet, moon;
+// model
 var aircraft;
-//var texture_0, texture_1, texture_2;
-var timer = 2;
-var yfactor = 0;
-var s = 60; // 1 second per frame
-var multiplier = 0;
-var sign;
-var el;
+
 var pos = 1;
 var moodColor = [];
 moodColor.lenght = 3;
 var moodColorC = [];
-var s = 0;
 var moveCam = false;
 var x_pos = 0;
 var y_pos = 0;
@@ -22,71 +16,40 @@ var y_aircraft = 0;
 var z_aircraft = 0;
 var scaleAircraft = 40000;
 var getRidOfPlanets = 0;
+var anomalyStroke = 0;
 
 function preload() {
   planet = loadImage("assets/makemake.jpg");
   moon = loadImage("assets/eris.jpg");
-  aircraft = loadModel("assets/Aircraft.obj", true); // true = maschera renderizzata (normalizzata) secondo sistema riferimento p5
+  aircraft = loadModel("assets/Aircraft.obj", true);
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   frameRate(60);
   angleMode(DEGREES);
+
   moodColor = color(random() * 255, random() * 255, random() * 255, 50);
-  //moodColorC = color(random() * 255, random() * 255, random() * 255, 20);
+
+  // graphics that covers the 3D aircraft
   graphics = createGraphics(width / 1.92, height / 1.08);
-  //graphics.background(0, 150, 0, 50);
   graphics.background(moodColor);
   graphics.fill(130, 200);
   graphics.ellipse(width / 2, height / 2, width / (1.92 * 2), height / (1.08 * 1.43));
-  //textureWrap(REPEAT);
+
+  anomaly_text = createDiv('ANOMALY DETECTED <br> click to inspect');
+  anomaly_text.style('position: absolute; top: 4%; right: 5%; width: 10vw; height: 10vh; color: white; text-align: center; font-family: Verdana; font-size: 0.7vw');
+
 }
 
 function draw() {
   background(0);
-
-  // var direction = 1;
-  // if (mouseY > height/2) { // bottom of the screen
-  //   direction = 1;
-  //   if (mouseX > pmouseX) { // move mouse to right
-  //     x_angle = map(mouseX, 0, width, 2160, -2160);
-  //   } else { // move mouse to left
-  //     x_angle = map(mouseX, width, 0, -2160, 2160);
-  //   }
-  // } else if (mouseY < height/2) { // topo of the screen
-  //   direction = -1;
-  //   if (mouseX > pmouseX) { // move mouse to right
-  //     x_angle = map(mouseX, 0, width, 2160, -2160);
-  //   } else { // move mouse to left
-  //     x_angle = map(mouseX, width, 0, -2160, 2160);
-  //   }
-  // }
-  //
-  // //orbitControl();
-  // camera(x_angle, 0, direction*1000*pos, 0, 0, 0, 0, 1, 0);
-  //
-  //
-  // ambientLight(moodColor); // 200, 200, 200
-  // graphics.fill(moodColor, 200);
-  //
-  //
-  //
-  //
-
-   noStroke();
-  //
-  //
-
-
+  // when the user clicks on the canvas there is a transition of the camera from the view of the planets to a position close to an aircraft 3D model
   if (moveCam == true) {
-    getRidOfPlanets-= 1;
+    getRidOfPlanets-= 1;  // while the camera is moving, the planets move towards the left to free the view
     if (x_pos < width/3.84) {
       x_pos += width/1920;
     }
-    // if (y_pos > -1200) {
-    //   y_pos -= 1;
-    // }
     if ((2875 + z_pos) > 100) {
       z_pos -= width/1920;
     }
@@ -96,25 +59,19 @@ function draw() {
     if (y_aircraft > -width/1.42) {
       y_aircraft -= width/480;
     }
-    if (z_aircraft > 0) {
-      //z_aircraft-= 2.32;
-    }
   }
-
+  // camera and lights at the beginning, using the size of the aircraft model to identify the different states (aircraft very small at the beginning)
   if (scaleAircraft <= 40000 && scaleAircraft >  width/7.5) {
 
     ambientLight(10, 10, 10);
     directionalLight(255, 255, 255, 0, 1, -0.7);
 
-    camera(0 + x_pos, 0 + y_pos, 2875 + z_pos, 0 + x_aircraft, 0 + y_aircraft, 0 + z_aircraft, 0, 1, 0); // z 875, z 2875
-    //console.log(x_pos, y_pos, z_pos);
+    camera(0 + x_pos, 0 + y_pos, 2875 + z_pos, 0 + x_aircraft, 0 + y_aircraft, 0 + z_aircraft, 0, 1, 0);
 
-  } else if (scaleAircraft <  width/7.5) {
-     var direction = 1;
-     //rotateX(90);
+  } else if (scaleAircraft <  width/7.5) {  // when the aircraft reaches a size below this value, a new camera (controlled with the mouse) and a new light (color is changed on mouse click) are created
+     var direction = 1; // variable that controls the direction of the Z axis
     if (mouseY < height/2) { // top of the screen
       direction = 1;
-      //rotateX(-35);
       if (mouseX > pmouseX) { // move mouse to right
         x_angle = map(mouseX, 0, width, 200, 4000);
       } else { // move mouse to left
@@ -122,25 +79,20 @@ function draw() {
       }
     } else if (mouseY > height/2) { // bottom of the screen
       direction = -1;
-
-      //rotateZ(180);
       if (mouseX > pmouseX) { // move mouse to right
         x_angle = map(mouseX, 0, width, 200, 4000);
       } else { // move mouse to left
         x_angle = map(mouseX, width, 0, 4000, 200);
       }
     }
-
-    //orbitControl();
-
     ambientLight(moodColor); // 200, 200, 200
     graphics.fill(moodColor, 200);
-    
+
+    // parameter "pos" controls the zoom with the mouse wheel
     camera(x_angle, y_aircraft, 2300*direction*pos, x_aircraft, y_aircraft, 0, 0, 1, 0);
 
-
-
   }
+
   ////////////////////////// Aircraft
   push();
   translate(width/0.91, -width/1.42, 0); // 2100, 1350
@@ -156,8 +108,8 @@ function draw() {
     scale(height / scaleAircraft);  // 550
   }
 
+  noStroke();
 
-  //rotateY(0);
   rotateZ(180);
   rotateX(-20);
 
@@ -167,10 +119,6 @@ function draw() {
  // shininess(100);
  //emissiveMaterial(255, 255, 255);
  //ambientMaterial(70, 130, 230);
-
-
-
- //texture(textures[2]);
  model(aircraft);
  pop();
 
@@ -192,25 +140,24 @@ function draw() {
   sphere(width / 16, 150, 150);
   pop();
   }
-
-
+  // anomaly detected effect
+  push();
+  noFill();
+  stroke(200, 150);
+  strokeWeight(4 - anomalyStroke);
+  ellipse(width/0.91, -width/1.42, 20 + 100*cos(frameCount*2));
+  pop();
 
 }
 
 function mouseClicked() {
   moodColor = color(random() * 255, random() * 255, random() * 255);
-  //moodColorC = color(random() * 255, random() * 255, random() * 255, 20);
-  console.log(moodColor);
-    moveCam = true;
+  moveCam = true;
 }
 
 function mouseWheel(event) {
   print(event.delta);
-
-      pos += event.delta * 0.0003;
-
-
-  //uncomment to block page scrolling
+  pos += event.delta * 0.0003;
   return false;
 }
 
